@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 
-import { customErrorResponse } from '../utils/customErrorResponse.js'
+import { customErrorResponse } from '../utils/customResponse.js'
 
 function validate(schema) {
   return async (req, res, next) => {

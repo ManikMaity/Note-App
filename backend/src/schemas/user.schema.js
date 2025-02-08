@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
-import { SALT_ROUND } from "../config/server.config";
+import { SALT_ROUND } from "../config/server.config.js";
 
 
 const userSchema = new Schema({
@@ -24,7 +24,7 @@ userSchema.pre('save', function (next) {
     if (!user.isModified('password')) return next()
     const hashedPassword = bcrypt.hashSync(user.password, SALT_ROUND)
     user.password = hashedPassword
-    user.avatar = `https://robohash.org/${user.username}`
+    user.avatar = `https://robohash.org/${user.email.split("@")[0]}`
     next()
   })
 
