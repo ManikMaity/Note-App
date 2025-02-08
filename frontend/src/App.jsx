@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppRoutes from "./pages/Routes";
 import { Toaster } from "@/components/ui/toaster"
+import ModelContainer from "./components/organisms/Models/ModelContainer";
 
 function App() {
   
@@ -9,6 +10,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppRoutes/>
+      <ModelContainer/>
       <Toaster/>
     </QueryClientProvider>
   )

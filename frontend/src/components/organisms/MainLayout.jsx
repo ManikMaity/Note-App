@@ -8,6 +8,7 @@ import { Home, Star } from "lucide-react";
 import { Button } from "../ui/button";
 import { Link, useLocation } from "react-router-dom";
 import Header from "../molecules/Header";
+import InputBar from "../molecules/InputBar";
 
 const SidebarLinks = [
   {
@@ -23,10 +24,7 @@ const SidebarLinks = [
 ];
 
 export default function MainLayout({ children }) {
-
-    const location = useLocation();
-   
-
+  const location = useLocation();
 
   return (
     <ResizablePanelGroup
@@ -49,7 +47,14 @@ export default function MainLayout({ children }) {
 
           <div className="flex flex-col gap-2 mt-4">
             {SidebarLinks.map((link, index) => (
-              <Button variant={location.pathname === link.path ? "sidebarActive" : "sidebar"} key={index} className="w-full justify-start" asChild>
+              <Button
+                variant={
+                  location.pathname === link.path ? "sidebarActive" : "sidebar"
+                }
+                key={index}
+                className="w-full justify-start"
+                asChild
+              >
                 <Link to={link.path}>
                   <link.icon />
                   <p>{link.name}</p>
@@ -62,8 +67,13 @@ export default function MainLayout({ children }) {
 
       <ResizableHandle />
 
-      <ResizablePanel defaultSize={80} className="p-2">
-        <Header/>
+      <ResizablePanel defaultSize={80} className="p-2 relative">
+        <Header />
+        {children}
+
+        <div className="absolute bottom-0 w-full pr-4 pb-2">
+          <InputBar />
+        </div>
       </ResizablePanel>
     </ResizablePanelGroup>
   );
