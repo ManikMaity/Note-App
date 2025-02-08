@@ -1,3 +1,6 @@
+import { toast } from "@/hooks/use-toast";
+import { Description } from "@radix-ui/react-dialog";
+
 export function getErrorMessage(error) {
     if (Array.isArray(error?.err) && error?.err[0]){
         return error.err[0];
@@ -36,4 +39,11 @@ export const htmlToMobileText = (html) => {
     hours = hours % 12 || 12;
   
     return `${month} ${day}, ${year} · ${hours} : ${minutes} ${ampm}`;
+  };
+
+
+  export const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text)
+      .then(() => toast({description : "Copied to clipboard"}))
+      .catch((err) => toast({description : "Failed to copy to clipboard"}));
   };

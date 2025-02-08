@@ -27,3 +27,18 @@ export async function createNoteRequest(noteData) {
         throw err.response.data;
     }
 }
+
+
+export async function deleteNoteRequest(noteId) {
+    try {
+        const response = await axios.delete(`/notes/delete/${noteId}`, {
+            headers: {
+                "note-app-token": localStorage.getItem("note-app-token"),
+            }
+        })
+        return response.data.data;
+    }
+    catch(err){
+        throw err.response.data;
+    }
+}
