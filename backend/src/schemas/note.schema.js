@@ -34,6 +34,11 @@ const noteSchema = new Schema({
     imageUrls: {
         type: [String],
         default: [],
+    },
+    type : {
+        type : String,
+        enum : ['text', 'transcript'],
+        default : 'text'
     }
 }, {timestamps : true});
 

@@ -17,5 +17,6 @@ export const createNoteSchema = z.object({
     audioUrl: z.string().optional(),
     transcribedText: z.string().optional(),
     isFavorite: z.boolean().default(false),
-    imageUrls: z.array(z.string()).optional()
+    imageUrls: z.array(z.string()).optional(),
+    type : z.string().optional()
 });
