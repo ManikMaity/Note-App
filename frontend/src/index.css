@@ -55,6 +55,26 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%
   }
+
+  /* Prose styling for the editor content */
+.prose {
+  h1, h2, h3 {
+    @apply font-bold;
+  }
+  h1 { @apply text-2xl; }
+  h2 { @apply text-xl; }
+  h3 { @apply text-lg; }
+  
+  ul { @apply list-disc pl-4; }
+  ol { @apply list-decimal pl-4; }
+  
+  a { @apply text-blue-500 underline; }
+  
+  pre { @apply bg-gray-100 p-4 rounded-md; }
+  
+  blockquote { @apply border-l-4 border-gray-300 pl-4 italic; }
+}
+
 }
 @layer base {
   * {

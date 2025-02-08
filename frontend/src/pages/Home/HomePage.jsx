@@ -1,11 +1,10 @@
-import LogoutButton from '@/components/molecules/LogoutButton'
-import { Button } from '@/components/ui/button'
+import NotesContainer from '@/components/organisms/Note/NotesContainer'
 
 function HomePage() {
   return (
-    <div>
-      <LogoutButton/>
-    </div>
+    <main>
+      <NotesContainer />
+    </main>
   )
 }
 

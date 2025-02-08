@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 const useModalStore = create((set) => ({
-  createNoteModalOpen: true,
+  createNoteModalOpen: false,
 
   openCreateNote: () => set({ createNoteModalOpen: true }),
   closeCreateNote: () => set({ createNoteModalOpen: false }),
