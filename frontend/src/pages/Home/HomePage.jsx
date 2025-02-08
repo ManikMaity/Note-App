@@ -1,9 +1,10 @@
+import LogoutButton from '@/components/molecules/LogoutButton'
 import { Button } from '@/components/ui/button'
 
 function HomePage() {
   return (
     <div>
-      <Button>hi there</Button>
+      <LogoutButton/>
     </div>
   )
 }

@@ -2,12 +2,14 @@ import { useMutation } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 import { signinRequest } from "@/api/auth";
 import { getErrorMessage } from "@/lib/utilFunc";
+import useAuthStore from "../store/authSore";
 
 
 
 function useSignin() {
 
   const { toast } = useToast();
+  const {login} = useAuthStore();
 
 
   const {data, mutateAsync : signinMutateAsync, isError, isLoading, isSuccess, error} = useMutation({
@@ -21,6 +23,7 @@ function useSignin() {
         });
         localStorage.setItem("note-app-token", data.token);
         localStorage.setItem("note-app-user", JSON.stringify(data));
+        login(data, data.token);
     },
     onError : (error) => {
         toast({
