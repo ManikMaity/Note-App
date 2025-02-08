@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes"
 import { customErrorResponse, customSuccessResponse } from "../utils/customResponse.js"
-import { signupService } from "../services/user.service.js"
+import { signinService, signupService } from "../services/user.service.js"
 
 export const signupController = async (req, res) => {
     try {
