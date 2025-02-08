@@ -2,9 +2,14 @@ import express from "express";
 import { PORT } from "./config/server.config.js";
 import connectDB from "./config/db.config.js";
 import v1Router from "./routes/api/v1/v1.route.js";
+import cors from "cors";
 
 const app = express();
 
+app.use(cors({
+    origin: '*',
+    credentials: true
+}))
 app.use(express.json());
 
 
