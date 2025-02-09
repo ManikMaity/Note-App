@@ -114,7 +114,7 @@ function RecordAudio() {
   };
 
   const handleRecordingComplete = async (audioBlob, transcript) => {
-    console.log(audioBlob, transcript);
+    if (!audioBlob || !transcript) return;
     const audioUrl = await uploadAudio(audioBlob);
     await createNoteMutateAsync({
       title: makeTitleFromText(transcript),
