@@ -6,29 +6,31 @@ import cors from "cors";
 
 const app = express();
 
-// const corsOptions = {
-//     credentials: true,
-//     origin: ['http://localhost:3000', 'http://localhost:5173', 'https://note-app-2p5q-pq8pv8902-manik-maitys-projects.vercel.app'] 
-// };
+const corsOptions = {
+    origin: [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://note-app-manik.vercel.app"
+    ],
+    credentials: true, // Allow cookies & authentication headers
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+};
 
+app.use(cors(corsOptions));
 
-app.use(cors({
-    origin : "*",
-    credentials: true
-}));
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
-
 app.get("/", (req, res) => {
-    res.json({
-        msg : "working"
-    })
-})
+    res.json({ msg: "working" });
+});
 
 app.use("/api/v1", v1Router);
 
 await connectDB();
+
 app.listen(PORT, () => {
     console.log(`Server is running on port http://localhost:${PORT}`);
-})
+});
