@@ -1,15 +1,19 @@
 import { createNoteRequest } from "@/api/note"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "../use-toast"
 import { getErrorMessage } from "@/lib/utilFunc"
 
 function useCreateNote() {
+
+  const queryClient = useQueryClient();
+
   const {mutateAsync : createNoteMutateAsync, isPending : createNoteLoading} = useMutation({
     mutationFn: createNoteRequest,
     onSuccess: (data) => {
         toast({
             description: "Successfully created note",
         })
+        queryClient.invalidateQueries(["user-notes"]);
     },
     onError: (error) => {
         toast({

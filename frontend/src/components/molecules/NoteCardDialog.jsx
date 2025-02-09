@@ -2,19 +2,31 @@ import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Star, Maximize, Minimize, ImagePlus, Save, X } from "lucide-react";
+import { Star, Maximize, Minimize, ImagePlus, Save, X, Underline } from "lucide-react";
 import { Label } from "../ui/label";
 // import { useUpdateNote } from "@/hooks/note/useUpdateNote";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utilFunc";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 // import useUploadNoteImage from "@/hooks/note/useUploadNoteImage";
 
 function NoteCardDialog({ noteData, open, onOpenChange }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(noteData.title);
-  const [editedContent, setEditedContent] = useState(noteData.content);
+
+    const editor = useEditor({
+      extensions: [StarterKit, Underline],
+      content: '',
+    });
+
+    useEffect(() => {
+      if (editor) {
+        editor.commands.setContent(noteData.content);
+      }
+    }, [editor, noteData.content]);
+    
   
 
 
@@ -88,20 +100,20 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
         </DialogHeader>
 
         <div className="flex-1 overflow-auto">
-          {noteData.type === "audio" && (
-            <div className="mb-4 p-4 bg-muted rounded-lg">
+          {noteData.type === "transcript" && (
+            <div className="mb-4 p-4 bg-muted rounded-lg w-full">
+              <audio controls src={noteData.audioUrl} style={{width: "100%"}}/>
               <h3 className="font-medium mb-2">Audio Transcription:</h3>
-              <p className="text-sm">{noteData.content}</p>
+              <p className="text-sm">{noteData.transcribedText}</p>
             </div>
           )}
 
           {isEditing ? (
             <div className="space-y-4">
-              <Textarea
-                value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
-                className="min-h-[300px]"
-              />
+               <EditorContent 
+                            editor={editor} 
+                            className="prose max-w-none focus:outline-none min-h-[200px]"
+                    />
               
               <div className="flex items-center gap-4">
                 <Label
@@ -123,7 +135,7 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
             </div>
           ) : (
             <div className="prose dark:prose-invert max-w-none space-y-2">
-              <p className="p-2 max:min-h-60 overflow-y-scroll" dangerouslySetInnerHTML={{ __html: editedContent}} ></p>
+              <p className="p-2 max:min-h-60 overflow-y-scroll" dangerouslySetInnerHTML={{ __html: noteData.content}} ></p>
               {noteData.imageUrls?.length > 0 && (
                 <div className="flex flex-wrap gap-4 mb-4">
                   {noteData.imageUrls.map((url) => (

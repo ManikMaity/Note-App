@@ -3,8 +3,7 @@ import { Mic } from "lucide-react";
 import { Button } from "../ui/button";
 import { makeTitleFromText } from "@/lib/utilFunc";
 import useUploadAudio from "@/hooks/firebase/useUploadAudio";
-
-
+import useCreateNote from "@/hooks/note/useCreateNote";
 
 function RecordAudio() {
   const [isRecording, setIsRecording] = useState(false);
@@ -14,12 +13,13 @@ function RecordAudio() {
   const transcriptRef = useRef("");
   const timeoutRef = useRef(null);
 
-  const { uploadAudio } = useUploadAudio();
+  const { uploadAudio, isLoading } = useUploadAudio();
+  const { createNoteMutateAsync, createNoteLoading } = useCreateNote();
 
   useEffect(() => {
     return () => {
       if (mediaRecorder) {
-        mediaRecorder.stream?.getTracks().forEach(track => track.stop());
+        mediaRecorder.stream?.getTracks().forEach((track) => track.stop());
         mediaRecorder.stop();
       }
       if (recognitionRef.current) {
@@ -47,7 +47,8 @@ function RecordAudio() {
         transcriptRef.current = "";
       };
 
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
         alert("Speech recognition not supported in this browser.");
         return;
@@ -86,7 +87,7 @@ function RecordAudio() {
   const stopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
-      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      mediaRecorder.stream.getTracks().forEach((track) => track.stop());
     }
     if (recognitionRef.current) {
       recognitionRef.current.stop();
@@ -98,24 +99,29 @@ function RecordAudio() {
     setIsRecording(false);
   };
 
-  const handleRecordingComplete = async(audioBlob, transcript) => {
+  const handleRecordingComplete = async (audioBlob, transcript) => {
     const audioUrl = await uploadAudio(audioBlob);
-    console.log("Audio URL:", audioUrl);
-    console.log("Audio blob:", audioBlob);
-    console.log("Transcript:", transcript);
-    console.log(makeTitleFromText(transcript));
+    await createNoteMutateAsync({
+      title: makeTitleFromText(transcript),
+      content: `<p>${transcript}</p>`,
+      unformatedContent : transcript,
+      transcribedText : transcript,
+      audioUrl,
+      type : "transcript"
+    });
   };
 
   return (
     <div className="flex items-center gap-2">
       <Button
+        disabled={isLoading || createNoteLoading}
         variant="destructive"
         size="lg"
         onClick={isRecording ? stopRecording : startRecording}
         className="flex items-center rounded-full gap-2"
       >
         <Mic size={20} />
-        {isRecording ? "Stop Recording" : "Record"}
+        {isRecording ? "Stop Recording" : `${isLoading || createNoteLoading ? "Creating.." : "Start Recording"}`}
       </Button>
     </div>
   );
