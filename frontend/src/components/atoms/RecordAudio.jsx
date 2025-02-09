@@ -50,11 +50,12 @@ function RecordAudio() {
         audioChunks.current.push(e.data);
       };
 
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const mimeType = audioChunks.current[0]?.type || 'audio/webm';
         const audioBlob = new Blob(audioChunks.current, { type: mimeType });
-        handleRecordingComplete(audioBlob, transcriptRef.current.trim());
+        await handleRecordingComplete(audioBlob, transcriptRef.current.trim());
         transcriptRef.current = "";
+        stream.getTracks().forEach(track => track.stop());
       };
 
       recorder.onerror = (event) => {
@@ -100,8 +101,11 @@ function RecordAudio() {
 
   const stopRecording = () => {
     if (mediaRecorder) {
+      // Request final data chunk before stopping
+      if (mediaRecorder.state === "recording") {
+        mediaRecorder.requestData();
+      }
       mediaRecorder.stop();
-      mediaRecorder.stream.getTracks().forEach((track) => track.stop());
     }
     if (recognitionRef.current) {
       recognitionRef.current.stop();
@@ -113,7 +117,9 @@ function RecordAudio() {
     setIsRecording(false);
   };
 
+
   const handleRecordingComplete = async (audioBlob, transcript) => {
+    console.log(audioBlob, transcript);
     if (!audioBlob || !transcript) return;
     const audioUrl = await uploadAudio(audioBlob);
     await createNoteMutateAsync({
