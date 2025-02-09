@@ -42,3 +42,18 @@ export async function deleteNoteRequest(noteId) {
         throw err.response.data;
     }
 }
+
+
+export async function updateNoteRequest({noteId, noteData}) {
+    try {
+        const response = await axios.put(`/notes/update/${noteId}`, noteData, {
+            headers: {
+                "note-app-token": localStorage.getItem("note-app-token"),
+            }
+        })
+        return response.data.data;
+    }
+    catch(err){
+        throw err.response.data;
+    }
+}

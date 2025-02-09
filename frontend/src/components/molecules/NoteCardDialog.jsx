@@ -1,15 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Star, Maximize, Minimize, ImagePlus, Save, X, Underline } from "lucide-react";
+import { Star, Maximize, Minimize, ImagePlus, Save, X, Underline, ListOrdered, List, UnderlineIcon, Italic, Bold } from "lucide-react";
 import { Label } from "../ui/label";
-// import { useUpdateNote } from "@/hooks/note/useUpdateNote";
 import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/utilFunc";
+import { formatDate, htmlToMobileText } from "@/lib/utilFunc";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-// import useUploadNoteImage from "@/hooks/note/useUploadNoteImage";
+import useUpdateNote from "@/hooks/note/useUpdateNote";
 
 function NoteCardDialog({ noteData, open, onOpenChange }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -30,36 +29,25 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
   
 
 
-//   const { mutateAsync: updateNote, isPending: isUpdating } = useUpdateNote();
-//   const { mutateAsync: uploadImage, isPending: isUploading } = useUploadNoteImage();
+  const {updateNoteMutateAsync, updateNoteLoading} = useUpdateNote();
 
-//   const handleImageUpload = async (e) => {
-//     const file = e.target.files?.[0];
-//     if (!file) return;
-    
-//     const url = await uploadImage({
-//       noteId: noteData._id,
-//       file
-//     });
-    
-//     if (url) {
-//       setEditedContent(`${editedContent}\n![image](${url})`);
-//     }
-//   };
 
-//   const handleSave = async () => {
-//     await updateNote({
-//       id: noteData._id,
-//       title: editedTitle,
-//       content: editedContent
-//     });
-//     setIsEditing(false);
-//   };
+  const handleSave = async () => {
+    await updateNoteMutateAsync({
+      noteId : noteData._id,
+      noteData : {
+        title : editedTitle,
+        content : editor.getHTML(),
+        unformatedContent : htmlToMobileText(editor.getHTML()),
+      }
+    }) 
+    setIsEditing(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={cn(
-        "max-w-3xl",
+        "max-w-3xl max-h-[calc(100vh-20px)] overflow-y-scroll",
         isFullscreen && "w-full h-full max-w-none flex flex-col"
       )}>
         <DialogHeader className="border-b pb-4">
@@ -114,7 +102,56 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
                             editor={editor} 
                             className="prose max-w-none focus:outline-none min-h-[200px]"
                     />
-              
+            <div className="flex gap-2 p-2 justify-center rounded-md">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              disabled={!editor.can().chain().focus().toggleBold().run()}
+              className={editor.isActive('bold') ? 'bg-gray-100' : ''}
+            >
+              <Bold className="h-4 w-4" />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              disabled={!editor.can().chain().focus().toggleItalic().run()}
+              className={editor.isActive('italic') ? 'bg-gray-100' : ''}
+            >
+              <Italic className="h-4 w-4" />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+              className={editor.isActive('underline') ? 'bg-gray-100' : ''}
+            >
+              <UnderlineIcon className="h-4 w-4" />
+            </Button>
+
+            <div className="mx-2 h-full w-px bg-gray-200" />
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={editor.isActive('bulletList') ? 'bg-gray-100' : ''}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              className={editor.isActive('orderedList') ? 'bg-gray-100' : ''}
+            >
+              <ListOrdered className="h-4 w-4" />
+            </Button>
+          </div>
               <div className="flex items-center gap-4">
                 <Label
                   htmlFor="image-upload"
@@ -158,10 +195,9 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
               <Button variant="outline" onClick={() => setIsEditing(false)}>
                 <X size={16} className="mr-2" /> Cancel
               </Button>
-              <Button >
+              <Button onClick={handleSave} >
                 <Save size={16} className="mr-2" /> 
-                {/* {isUpdating ? "Saving..." : "Save Changes"} */}
-                Save
+                {updateNoteLoading ? "Saving..." : "Save Changes"}
               </Button>
             </>
           ) : (
