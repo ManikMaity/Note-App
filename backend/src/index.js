@@ -6,10 +6,14 @@ import cors from "cors";
 
 const app = express();
 
-app.use(cors({
-    origin: '*',
-    credentials: true
-}))
+const corsOptions = {
+    credentials: true,
+    origin: ['http://localhost:3000', 'http://localhost:5173', 'https://note-app-2p5q-pq8pv8902-manik-maitys-projects.vercel.app'] 
+};
+
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 
