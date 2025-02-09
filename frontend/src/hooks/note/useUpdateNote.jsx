@@ -10,7 +10,7 @@ function useUpdateNote() {
         mutationFn : updateNoteRequest,
         onSuccess : (data) => {
             toast({
-                decription : "Successfully updated note"
+                description : "Successfully updated note"
             })
             queryClient.invalidateQueries(["user-notes"]);
         },

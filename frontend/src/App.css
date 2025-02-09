@@ -2,7 +2,7 @@
     outline: none;
   }
   .ProseMirror {        
-    min-height: 150px;
+    min-height: 200px;
     max-height: 100%;
     overflow: scroll;
   }

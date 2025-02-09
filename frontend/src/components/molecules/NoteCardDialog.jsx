@@ -10,22 +10,38 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import useUpdateNote from "@/hooks/note/useUpdateNote";
 import useChangeFavorite from "@/hooks/note/useChangeFavorite";
+import useImageUpload from "@/hooks/firebase/useImageUpload";
 
 function NoteCardDialog({ noteData, open, onOpenChange }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(noteData.title);
+  const [imageUrls, setImageUrls] = useState(noteData.imageUrls);
+  const {imageUrl : uploadedImageUrl, isUploading, uploadImageToFirebase, loadingPercentage} = useImageUpload();
 
     const editor = useEditor({
       extensions: [StarterKit, Underline],
       content: '',
     });
 
+
     useEffect(() => {
       if (editor) {
         editor.commands.setContent(noteData.content);
       }
     }, [editor, noteData.content]);
+
+    async function handleImageUpload(event) {
+      const image = event.target.files[0];
+      await uploadImageToFirebase(image);
+    }
+
+    useEffect(() => {
+      if (!uploadedImageUrl || imageUrls.includes(uploadedImageUrl)) {
+        return;
+      }
+      setImageUrls([...imageUrls, uploadedImageUrl]);
+    }, [uploadedImageUrl])
     
   
 
@@ -45,6 +61,7 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
         title : editedTitle,
         content : editor.getHTML(),
         unformatedContent : htmlToMobileText(editor.getHTML()),
+        imageUrls
       }
     }) 
     setIsEditing(false);
@@ -92,7 +109,7 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
         </DialogHeader>
 
         <div className="flex-1 overflow-auto">
-          {noteData.type === "transcript" && (
+          {noteData.type === "transcript" && !isEditing && (
             <div className="mb-4 p-4 bg-muted rounded-lg w-full">
               <audio controls src={noteData.audioUrl} style={{width: "100%"}}/>
               <h3 className="font-medium mb-2">Audio Transcription:</h3>
@@ -156,7 +173,19 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
               <ListOrdered className="h-4 w-4" />
             </Button>
           </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-start gap-4">
+              {imageUrls?.length > 0 && (
+                <div className="flex flex-wrap gap-4 mb-4">
+                  {imageUrls.map((url, index) => (
+                    <img
+                      key={index}
+                      src={url}
+                      alt="Note attachment"
+                      className="rounded-lg object-cover h-16 w-16"
+                    />
+                  ))}
+                </div>
+              )}
                 <Label
                   htmlFor="image-upload"
                   className="flex items-center gap-2 text-sm cursor-pointer"
@@ -168,10 +197,10 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    // onChange={handleImageUpload} 
+                    onChange={handleImageUpload} 
                   />
                 </Label>
-                {/* {isUploading && <span className="text-sm text-muted-foreground">Uploading...</span>} */}
+                {isUploading && <span className="text-sm text-muted-foreground">{`${loadingPercentage}% uploading`}</span>}
               </div>
             </div>
           ) : (
@@ -179,9 +208,9 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
               <p className="p-2 max:min-h-60 overflow-y-scroll" dangerouslySetInnerHTML={{ __html: noteData.content}} ></p>
               {noteData.imageUrls?.length > 0 && (
                 <div className="flex flex-wrap gap-4 mb-4">
-                  {noteData.imageUrls.map((url) => (
+                  {noteData.imageUrls.map((url, index) => (
                     <img
-                      key={url}
+                      key={index}
                       src={url}
                       alt="Note attachment"
                       className="rounded-lg object-cover h-16 w-16"
