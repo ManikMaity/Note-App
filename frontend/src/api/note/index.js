@@ -57,3 +57,17 @@ export async function updateNoteRequest({noteId, noteData}) {
         throw err.response.data;
     }
 }
+
+export async function changeFavoriteStatusRequest({noteId, isFavorite = false}) {
+    try {
+        const response = await axios.put(`/notes/favorite/${noteId}`, {isFavorite}, {
+            headers: {
+                "note-app-token": localStorage.getItem("note-app-token"),
+            }
+        })
+        return response.data.data;
+    }
+    catch(err){
+        throw err.response.data;
+    }
+}

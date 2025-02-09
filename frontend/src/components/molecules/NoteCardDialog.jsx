@@ -9,6 +9,7 @@ import { formatDate, htmlToMobileText } from "@/lib/utilFunc";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import useUpdateNote from "@/hooks/note/useUpdateNote";
+import useChangeFavorite from "@/hooks/note/useChangeFavorite";
 
 function NoteCardDialog({ noteData, open, onOpenChange }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -30,6 +31,11 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
 
 
   const {updateNoteMutateAsync, updateNoteLoading} = useUpdateNote();
+  const {changeFavoriteStatusMutateAsync} = useChangeFavorite();
+
+  async function handleFavoriteStatusChange() {
+      await changeFavoriteStatusMutateAsync({noteId : noteData._id, isFavorite : !noteData.isFavorite});
+  }
 
 
   const handleSave = async () => {
@@ -69,12 +75,10 @@ function NoteCardDialog({ noteData, open, onOpenChange }) {
               <Button
                 variant="ghost"
                 size="icon"
+                onClick={handleFavoriteStatusChange}
                
               >
-                <Star
-                  size={18}
-                  className={noteData.favorite ? "text-yellow-500 fill-yellow-500" : ""}
-                />
+                {noteData.isFavorite ? <Star color="#FFD700" size={18} /> : <Star size={18} />}
               </Button>
               <Button
                 variant="ghost"
