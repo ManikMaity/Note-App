@@ -14,7 +14,7 @@ const corsOptions = {
     ],
     credentials: true, // Allow cookies & authentication headers
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization", "note-app-token"]
 };
 
 app.use(cors(corsOptions));
