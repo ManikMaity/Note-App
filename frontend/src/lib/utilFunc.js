@@ -137,3 +137,14 @@ export function handleFileUpload(file, setFileUploading, setFileUploaded, setPro
     );
     
 }
+
+
+export function makeTitleFromText(sentence) {
+    const text = sentence.trim();
+    if (text === "") {
+        return "Untitled Note";
+    }
+    else {
+       return text.length > 15 ? text.slice(0, 15) + "..." : text
+    }
+}

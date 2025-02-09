@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Mic } from "lucide-react";
 import { Button } from "../ui/button";
+import { makeTitleFromText } from "@/lib/utilFunc";
+import useUploadAudio from "@/hooks/firebase/useUploadAudio";
 
 
 
@@ -11,6 +13,8 @@ function RecordAudio() {
   const audioChunks = useRef([]);
   const transcriptRef = useRef("");
   const timeoutRef = useRef(null);
+
+  const { uploadAudio } = useUploadAudio();
 
   useEffect(() => {
     return () => {
@@ -94,10 +98,12 @@ function RecordAudio() {
     setIsRecording(false);
   };
 
-  const handleRecordingComplete = (audioBlob, transcript) => {
-    
+  const handleRecordingComplete = async(audioBlob, transcript) => {
+    const audioUrl = await uploadAudio(audioBlob);
+    console.log("Audio URL:", audioUrl);
     console.log("Audio blob:", audioBlob);
     console.log("Transcript:", transcript);
+    console.log(makeTitleFromText(transcript));
   };
 
   return (
