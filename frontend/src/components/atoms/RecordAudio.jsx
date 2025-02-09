@@ -34,7 +34,16 @@ function RecordAudio() {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      if (stream.getAudioTracks().length === 0) {
+        throw new Error("No audio tracks available");
+      }
+
+      const options = { mimeType: 'audio/webm' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        delete options.mimeType;
+      }
+
+      const recorder = new MediaRecorder(stream, options);
       audioChunks.current = [];
 
       recorder.ondataavailable = (e) => {
@@ -42,9 +51,14 @@ function RecordAudio() {
       };
 
       recorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks.current, { type: "audio/wav" });
+        const mimeType = audioChunks.current[0]?.type || 'audio/webm';
+        const audioBlob = new Blob(audioChunks.current, { type: mimeType });
         handleRecordingComplete(audioBlob, transcriptRef.current.trim());
         transcriptRef.current = "";
+      };
+
+      recorder.onerror = (event) => {
+        console.error('MediaRecorder error:', event.error);
       };
 
       const SpeechRecognition =
@@ -100,6 +114,7 @@ function RecordAudio() {
   };
 
   const handleRecordingComplete = async (audioBlob, transcript) => {
+    console.log(audioBlob, transcript);
     const audioUrl = await uploadAudio(audioBlob);
     await createNoteMutateAsync({
       title: makeTitleFromText(transcript),
