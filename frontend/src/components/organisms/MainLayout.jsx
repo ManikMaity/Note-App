@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { Link, useLocation } from "react-router-dom";
 import Header from "../molecules/Header";
 import InputBar from "../molecules/InputBar";
+import LogoutButton from "../molecules/LogoutButton";
 
 const SidebarLinks = [
   {
@@ -31,39 +32,37 @@ export default function MainLayout({ children }) {
       direction="horizontal"
       className="min-h-screen flex text-ba"
     >
-      {/* Sidebar */}
       <ResizablePanel defaultSize={20} className="bg-gray-100">
-        <div className="m-2 h-full">
-          <div className="flex gap-2 items-center justify-start p-1 rounded-full w-full shadow-sm min-w-32 bg-white">
-            <div>
-              <img
-                className="w-8 rounded-full"
-                src={manikmaity}
-                alt="Manikmaity"
-              />
-            </div>
-            <p className="font-semibold text-xl">AI Note</p>
-          </div>
+  <div className="m-2 h-[95%] flex flex-col">
+    <div className="flex gap-2 items-center justify-start p-1 rounded-full w-full shadow-sm min-w-32 bg-white">
+      <div>
+        <img className="w-8 rounded-full" src={manikmaity} alt="Manikmaity" />
+      </div>
+      <p className="font-semibold text-xl">AI Note</p>
+    </div>
 
-          <div className="flex flex-col gap-2 mt-4">
-            {SidebarLinks.map((link, index) => (
-              <Button
-                variant={
-                  location.pathname === link.path ? "sidebarActive" : "sidebar"
-                }
-                key={index}
-                className="w-full justify-start"
-                asChild
-              >
-                <Link to={link.path}>
-                  <link.icon />
-                  <p>{link.name}</p>
-                </Link>
-              </Button>
-            ))}
-          </div>
-        </div>
-      </ResizablePanel>
+    <div className="flex flex-col gap-2 mt-4 flex-grow">
+      {SidebarLinks.map((link, index) => (
+        <Button
+          variant={location.pathname === link.path ? "sidebarActive" : "sidebar"}
+          key={index}
+          className="w-full justify-start"
+          asChild
+        >
+          <Link to={link.path}>
+            <link.icon />
+            <p>{link.name}</p>
+          </Link>
+        </Button>
+      ))}
+    </div>
+
+    <div className="mt-auto w-full">
+      <LogoutButton />
+    </div>
+  </div>
+</ResizablePanel>
+
 
       <ResizableHandle />
 

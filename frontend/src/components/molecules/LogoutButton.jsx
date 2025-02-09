@@ -7,7 +7,7 @@ function LogoutButton() {
     const {logoutFn} = useLogout();
 
   return (
-    <Button variant="destructive" onClick={logoutFn}>
+    <Button variant="destructive" className="w-full" onClick={logoutFn}>
       Logout
     </Button>
   )

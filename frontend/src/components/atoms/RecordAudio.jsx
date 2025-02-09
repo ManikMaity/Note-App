@@ -121,7 +121,7 @@ function RecordAudio() {
         className="flex items-center rounded-full gap-2"
       >
         <Mic size={20} />
-        {isRecording ? "Stop Recording" : `${isLoading || createNoteLoading ? "Creating.." : "Start Recording"}`}
+        {isRecording ? "Stop Recording" : `${isLoading || createNoteLoading ? "Creating.." : "Start"}`}
       </Button>
     </div>
   );

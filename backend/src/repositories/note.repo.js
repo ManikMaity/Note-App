@@ -4,8 +4,8 @@ import crudFunctions from "./crud.repo.js";
 
 const noteRepo = {
     ...crudFunctions(noteModel),
-    getUserNotesByUserId : async function (userId) {
-        const notes = await noteModel.find({ user : userId });
+    getUserNotesByUserId : async function (query, sortOption) {
+        const notes = await noteModel.find(query).sort(sortOption);
         return notes;
     }
 }

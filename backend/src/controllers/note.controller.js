@@ -15,7 +15,8 @@ function handleError (err, res) {
 export const getUserNotesController = async (req, res) => {
     try {
         const userId = req.user._id
-        const response = await getUserNotesService(userId);
+        const response = await getUserNotesService(userId, req.body);
+        
         res
           .status(StatusCodes.OK)
           .json(
@@ -68,6 +69,30 @@ export const updateNoteController = async (req, res) => {
       .status(StatusCodes.OK)
       .json(
         customSuccessResponse('Note updated successfully', response)
+      )
+  }
+  catch (err) {
+    handleError(err, res);
+  }
+}
+
+export const changeNoteFavoriteStatusController = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const noteId = req.params.id;
+    const isFavorite = req.body.isFavorite;
+    if (!isFavorite) {
+      throw {
+        statusCode : StatusCodes.BAD_REQUEST,
+        message : "isFavorite is required",
+        explanation : ["isFavorite is required"]
+      }
+    }
+    const response = await updateNoteService(userId, noteId, {isFavorite : isFavorite});
+    res
+      .status(StatusCodes.OK)
+      .json(
+        customSuccessResponse('Note added to favorite', response)
       )
   }
   catch (err) {

@@ -1,8 +1,8 @@
 import axios from "@/config/axios.config";
 
-export async function getNotesRequest() {
+export async function getNotesRequest(query) {
     try {
-        const response = await axios.get("/notes", {
+        const response = await axios.post("/notes", query, {
             headers: {
                 "note-app-token": localStorage.getItem("note-app-token"),
             }

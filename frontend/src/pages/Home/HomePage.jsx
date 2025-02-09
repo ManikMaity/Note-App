@@ -2,7 +2,7 @@ import NotesContainer from '@/components/organisms/Note/NotesContainer'
 
 function HomePage() {
   return (
-    <main>
+    <main className='max-h-[calc(100vh-110px)] overflow-y-scroll'>
       <NotesContainer />
     </main>
   )

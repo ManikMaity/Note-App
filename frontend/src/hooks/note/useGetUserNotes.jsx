@@ -1,11 +1,14 @@
 import { getNotesRequest } from "@/api/note"
 import { useQuery } from "@tanstack/react-query"
+import useFilterStore from "../store/filterStore";
 
 function useGetUserNotes() {
 
+  const {filters} = useFilterStore();
+
   const {data : notes, isLoading, isError, isSuccess, error, refetch} = useQuery({
-    queryFn : getNotesRequest,
-    queryKey: ["user-notes"],
+    queryFn : async () => await getNotesRequest(filters),
+    queryKey: ["user-notes", filters],
     staleTime: 10 * 1000 * 60 // 10 minutes
   });
 

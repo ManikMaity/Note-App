@@ -1,10 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Input } from '../ui/input';
-import { Search, SortAsc } from 'lucide-react';
+import { Search, SortAsc, SortDesc } from 'lucide-react';
 import { Button } from '../ui/button';
+import useFilterStore from '@/hooks/store/filterStore';
+import { useLocation } from 'react-router-dom';
 
 
 const Header = () => {
+
+  const {filters, setFilter} = useFilterStore();
+  const location = useLocation();
+
+
+  useEffect(() => {
+    if (location.pathname === "/favorites") {
+      setFilter("isFavorite", true);
+    }
+    else {
+      setFilter("isFavorite", "");
+    }
+  }, [location])
+
+
+  function handleOnChanege(e) {
+    setFilter("keyword", e.target.value);
+  }
+
+  useEffect(() => {
+    console.log(filters);
+  }, [filters])
+
+  function handleChangeSort() {
+    if (filters.sort === "newest") {
+      setFilter("sort", "oldest");
+    }
+    else {
+      setFilter("sort", "newest");
+    }
+  }
+
+
   return (
     <header className="bg-white">
       <div className="container flex flex-row gap-2 items-center justify-between space-y-0">
@@ -12,6 +47,8 @@ const Header = () => {
           <div className="relative">
             <Input
               type="text"
+              value={filters.keyword}
+              onChange={handleOnChanege}
               placeholder="Search..."
               className="pl-10 pr-4 py-2 w-full rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -19,8 +56,8 @@ const Header = () => {
           </div>
         </div>
 
-        <Button variant="outline" className="flex items-center rounded-full space-x-2">
-          <SortAsc size={18} />
+        <Button variant="outline" onClick={handleChangeSort} className="flex items-center rounded-full space-x-2">
+          {filters.sort === "newest" ? <SortAsc size={18} /> : <SortDesc size={18} />}
           <span>Sort</span>
         </Button>
       </div>

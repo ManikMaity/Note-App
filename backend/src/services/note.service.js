@@ -1,8 +1,16 @@
 import { StatusCodes } from "http-status-codes";
 import noteRepo from "../repositories/note.repo.js"
+import { buildQuery } from "../utils/buildQuery.js";
 
-export const getUserNotesService = async (userId) => {
-    const notes = await noteRepo.getUserNotesByUserId(userId);
+export const getUserNotesService = async (userId, body) => {
+    const query = buildQuery(body);
+    let sortOption = { createdAt: -1 }; 
+
+    if (body.sort === "oldest") {
+        sortOption = { createdAt: 1 };
+    }
+
+    const notes = await noteRepo.getUserNotesByUserId({...query, user : userId}, sortOption);
     return notes;
 }
 
