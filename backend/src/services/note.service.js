@@ -33,3 +33,23 @@ export const deleteNoteService = async (userId, noteId) => {
     return deletedNote
 }
 
+export const updateNoteService = async (userId, noteId, data) => {
+    const note = await noteRepo.getById(noteId);
+    if (!note) {
+        throw {
+            statusCode : StatusCodes.NOT_FOUND,
+            message : "Note not found",
+            explanation : ["Note not found"]
+        }
+    }
+    if (note.user.toString() !== userId.toString()) {
+        throw {
+            statusCode : StatusCodes.UNAUTHORIZED,
+            message : "You are not authorized to update this note",
+            explanation : ["You are not authorized to upadate this note"]
+        }
+    }
+
+    const updatedNote = await noteRepo.update(noteId, data);
+    return updatedNote;
+}

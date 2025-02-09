@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes"
 import { customErrorResponse, customSuccessResponse } from "../utils/customResponse.js"
-import { createNoteService, deleteNoteService, getUserNotesService } from "../services/note.service.js";
+import { createNoteService, deleteNoteService, getUserNotesService, updateNoteService } from "../services/note.service.js";
 
 function handleError (err, res) {
     if (err.statusCode) {
@@ -56,4 +56,21 @@ export const deleteNoteController = async (req, res) => {
     catch (err) {
         handleError(err, res);
     }
+}
+
+export const updateNoteController = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const noteId = req.params.id;
+    const data = req.body;
+    const response = await updateNoteService(userId, noteId, data);
+    res
+      .status(StatusCodes.OK)
+      .json(
+        customSuccessResponse('Note updated successfully', response)
+      )
+  }
+  catch (err) {
+    handleError(err, res);
+  }
 }
