@@ -1,13 +1,9 @@
-import React, { useState } from "react";
-import { Mic, Image, Pen } from "lucide-react";
-import { Input } from "../ui/input";
+import { Image, Pen } from "lucide-react";
 import { Button } from "../ui/button";
 import useModalStore from "@/hooks/store/modalStore";
+import RecordAudio from "../atoms/RecordAudio";
 
 const InputBar = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [audioChunks, setAudioChunks] = useState([]);
 
     const {openCreateNote} = useModalStore();
 
@@ -33,15 +29,8 @@ const InputBar = () => {
             </label>
           </div>
 
-          <Button
-            variant="destructive"
-            size="lg"
-            onClick={() => {}}
-            className="flex items-center rounded-full"
-          >
-            <Mic size={20} />
-            <span>Record</span>
-          </Button>
+          <RecordAudio/>
+         
         </div>
       </div>
     </footer>
